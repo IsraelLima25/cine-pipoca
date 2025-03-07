@@ -14,6 +14,10 @@ public class Filme {
         this.duracao = duracao;
     }
 
+    public String getTitulo() {
+        return titulo;
+    }
+
     @Override
     public String toString() {
         return "Filme{" +

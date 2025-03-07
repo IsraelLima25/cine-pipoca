@@ -19,6 +19,5 @@ public class MainModel {
 
         System.out.println(sessao);
 
-
     }
 }

@@ -1,5 +1,7 @@
 package com.lima.api.cine.model;
 
+import com.lima.api.cine.enun.FormaPagamento;
+
 import java.math.BigDecimal;
 
 public class Ingresso {
@@ -7,6 +9,7 @@ public class Ingresso {
     private Sessao sessao;
     private boolean isMeiaEntrada;
     private BigDecimal valorTotal;
+    private Pagamento pagamento;
 
     public Ingresso(Sessao sessao, boolean isMeiaEntrada) {
         this.sessao = sessao;
@@ -20,6 +23,10 @@ public class Ingresso {
 
     public boolean isMeiaEntrada() {
         return isMeiaEntrada;
+    }
+
+    public void pagar(FormaPagamento formaPagamento){
+        this.pagamento = new Pagamento(formaPagamento);
     }
 
     private void calcularValorTotal() {
