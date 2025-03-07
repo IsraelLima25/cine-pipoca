@@ -15,7 +15,7 @@ public class IngressoService {
 
         log.info("Reservando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
         reservarAssento(cliente, sessao, numeroAssento);
-        log.info("Assento numero = {}, reservado com sucesso para o cliente {}", numeroAssento, cliente.getNome());
+        log.info("Assento numero = {} reservado com sucesso para o cliente {}", numeroAssento, cliente.getNome());
 
         log.info("Gerando ingresso para o filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
         Ingresso ingresso = new Ingresso(sessao, false);

@@ -1,6 +1,7 @@
 package com.lima.api.cine.model;
 
 import com.lima.api.cine.enun.StatusAssento;
+import com.lima.api.cine.exception.AssentoIndisponivelException;
 
 public class Assento {
 
@@ -14,12 +15,29 @@ public class Assento {
         this.cliente = new Cliente("DESCONHECIDO");
     }
 
-    public void reservar(Cliente cliente){
+    public synchronized void reservar(Cliente cliente){
+
+        if(status != StatusAssento.VAZIO){
+            throw new AssentoIndisponivelException("Este assento já foi reservado");
+        }
+
+        System.out.println(Thread.currentThread().getName() + " passou na verificação do assento vazio...");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         this.cliente = cliente;
         this.status = StatusAssento.RESERVADO;
+
+        System.out.println(Thread.currentThread().getName() + " reservou o assento para " + cliente.getNome());
     }
 
     public void ocupar(Cliente cliente) {
+        if(status != StatusAssento.RESERVADO){
+            throw new AssentoIndisponivelException("Este assento já foi ocupado");
+        }
         this.cliente = cliente;
         this.status = StatusAssento.OCUPADO;
     }
@@ -40,5 +58,4 @@ public class Assento {
                 ", cliente=" + cliente.getNome() +
                 '}';
     }
-
 }

@@ -7,16 +7,20 @@ import com.lima.api.cine.service.IngressoService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainModel {
 
     public static void main(String[] args) {
 
+        /**
+         * Inicio fluxo
+         */
+
         IngressoService ingressoService = new IngressoService();
 
-        List<Sessao> sessaoList = new ArrayList<>();
+        /**
+         * Criar sessão
+         */
 
         Filme filme = new Filme("O auto da compadecida 2", IdiomaFilme.DUBLADO, "2h");
         Sala sala = new Sala("A");
@@ -25,13 +29,36 @@ public class MainModel {
         LocalDateTime dataHoraFim = dataHoraInicio.plus(2, ChronoUnit.HOURS);
         Sessao sessao = new Sessao(dataHoraInicio, dataHoraFim, filme, sala, new BigDecimal("40.00"));
 
-        sessaoList.add(sessao);
+        /**
+         * Criar cliente
+         */
+        Cliente cliente1 = new Cliente("João");
+        Cliente cliente2 = new Cliente("Maria");
 
-        Cliente cliente = new Cliente("Jonh");
+        /**
+         * Executa serviço de compra
+         */
 
-        Sessao sessao1 = sessaoList.get(0);
-        ingressoService.comprar(cliente, sessao, 1, FormaPagamento.PIX);
+        Thread threadJoao = new Thread(() -> ingressoService.comprar(cliente1, sessao, 1, FormaPagamento.PIX));
+        Thread threadMaria = new Thread(() -> ingressoService.comprar(cliente2, sessao, 1, FormaPagamento.CREDITO));
+
+        threadJoao.start();
+        threadMaria.start();
+
+        //ingressoService.comprar(cliente1, sessao, 1, FormaPagamento.PIX);
+        //ingressoService.comprar(cliente2, sessao, 1, FormaPagamento.CREDITO);
+
+        try {
+            threadJoao.join();
+            threadMaria.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         System.out.println(sessao);
+
+        /**
+         * Finaliza fluxo
+         */
     }
 }
