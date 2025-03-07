@@ -6,13 +6,16 @@ public class Assento {
 
     private int numero;
     private StatusAssento status;
+    private Cliente cliente;
 
     public Assento(int numero){
         this.numero = numero;
         this.status = StatusAssento.VAZIO;
+        this.cliente = new Cliente("DESCONHECIDO");
     }
 
-    public void reservar(){
+    public void reservar(Cliente cliente){
+        this.cliente = cliente;
         this.status = StatusAssento.RESERVADO;
     }
 
@@ -29,6 +32,7 @@ public class Assento {
         return "Assento{" +
                 "numero=" + numero +
                 ", status=" + status +
+                ", cliente=" + cliente.getNome() +
                 '}';
     }
 }

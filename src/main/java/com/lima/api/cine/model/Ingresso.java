@@ -10,6 +10,7 @@ public class Ingresso {
     private boolean isMeiaEntrada;
     private BigDecimal valorTotal;
     private Pagamento pagamento;
+    private Cliente cliente;
 
     public Ingresso(Sessao sessao, boolean isMeiaEntrada) {
         this.sessao = sessao;

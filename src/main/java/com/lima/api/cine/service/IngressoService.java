@@ -1,6 +1,7 @@
 package com.lima.api.cine.service;
 
 import com.lima.api.cine.enun.FormaPagamento;
+import com.lima.api.cine.model.Cliente;
 import com.lima.api.cine.model.Ingresso;
 import com.lima.api.cine.model.Sessao;
 import org.slf4j.Logger;
@@ -10,26 +11,29 @@ public class IngressoService {
 
     Logger log = LoggerFactory.getLogger(IngressoService.class);
 
-    public void comprar(Sessao sessao, int numeroAssento){
+    public void comprar(Cliente cliente, Sessao sessao, int numeroAssento, FormaPagamento formaPagamento){
 
-        log.info("Reservando assento numero = {} para compra", numeroAssento);
-        reservarAssento(sessao, numeroAssento);
-        log.info("Assento numero = {}, reservado com sucesso", numeroAssento);
+        log.info("Reservando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
+        reservarAssento(cliente, sessao, numeroAssento);
+        log.info("Assento numero = {}, reservado com sucesso para o cliente {}", numeroAssento, cliente.getNome());
 
-        log.info("Gerando ingresso para o filme {}", sessao.getFilme().getTitulo());
+        log.info("Gerando ingresso para o filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
         Ingresso ingresso = new Ingresso(sessao, false);
         log.info("""
+                
                 INGRESSO - {}
+                CLIENTE - {}
                 [GERADO COM SUCESSO]
-                """, sessao.getFilme().getTitulo());
-        log.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {}", sessao.getFilme().getTitulo());
-        ingresso.pagar(FormaPagamento.PIX);
-        log.info("Pagamento para ingresso do filme {} realizado com sucesso", sessao.getFilme().getTitulo());
+                
+                """, sessao.getFilme().getTitulo(), cliente.getNome());
+        log.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
+        ingresso.pagar(formaPagamento);
+        log.info("Pagamento para ingresso do filme {} do cliente {} realizado com sucesso", sessao.getFilme().getTitulo(), cliente.getNome());
     }
 
-    private void reservarAssento(Sessao sessao, int numeroAssento) {
+    private void reservarAssento(Cliente cliente, Sessao sessao, int numeroAssento) {
         sessao.getSala().getAssentos().stream()
                 .filter(assento -> assento.getNumero() == numeroAssento)
-                .findFirst().get().reservar();
+                .findFirst().get().reservar(cliente);
     }
 }
