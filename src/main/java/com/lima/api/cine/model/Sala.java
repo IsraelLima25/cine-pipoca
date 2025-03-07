@@ -21,6 +21,10 @@ public class Sala {
         return assentos;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
     public void abrirSala(){
         this.status = StatusSala.ABERTA;
     }

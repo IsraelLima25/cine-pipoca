@@ -23,17 +23,31 @@ public class IngressoService {
                 
                 INGRESSO - {}
                 CLIENTE - {}
-                [GERADO COM SUCESSO]
-                
-                """, sessao.getFilme().getTitulo(), cliente.getNome());
+                SALA - {}
+                ASSENTO - {}
+                [GERADO COM SUCESSO]                
+                """, sessao.getFilme().getTitulo(), cliente.getNome(), sessao.getSala().getNome(), numeroAssento);
         log.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
         ingresso.pagar(formaPagamento);
         log.info("Pagamento para ingresso do filme {} do cliente {} realizado com sucesso", sessao.getFilme().getTitulo(), cliente.getNome());
+
+        log.info("Ocupando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
+        ocuparAssento(cliente, sessao, numeroAssento);
+        log.info("Assento numero = {} para o cliente {} ocupado com sucesso. Desejamos uma ótima sessão", numeroAssento, cliente.getNome());
+
     }
 
+    // TODO segregar em um service de assentos
     private void reservarAssento(Cliente cliente, Sessao sessao, int numeroAssento) {
         sessao.getSala().getAssentos().stream()
                 .filter(assento -> assento.getNumero() == numeroAssento)
                 .findFirst().get().reservar(cliente);
+    }
+
+    // TODO segregar em um service de assentos
+    private void ocuparAssento(Cliente cliente, Sessao sessao, int numeroAssento){
+        sessao.getSala().getAssentos().stream()
+                .filter(assento -> assento.getNumero() == numeroAssento)
+                .findFirst().get().ocupar(cliente);
     }
 }

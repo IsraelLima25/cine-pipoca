@@ -19,6 +19,11 @@ public class Assento {
         this.status = StatusAssento.RESERVADO;
     }
 
+    public void ocupar(Cliente cliente) {
+        this.cliente = cliente;
+        this.status = StatusAssento.OCUPADO;
+    }
+
     public int getNumero() {
         return numero;
     }
@@ -35,4 +40,5 @@ public class Assento {
                 ", cliente=" + cliente.getNome() +
                 '}';
     }
+
 }
