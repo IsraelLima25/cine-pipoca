@@ -13,6 +13,17 @@ public class MainModel {
     public static void main(String[] args) {
 
         /**
+         * 1 - Subir um Database Docker Mysql - OK
+         * 2 - Conectar a API ao DataBase - OK
+         * 3 - Criar as entidades/relacionamentos usando flyway
+         * 4 - Criar as anotações JPA
+         * 5 - Criar os controllers/Services/Entities Sring Ecosystem
+         * 6 - Aplicar Lock Otimista para a reserva de poltronas
+         * 7 - Criar testes automatizados adicionando confiabilidade ao código
+         */
+
+
+        /**
          * Inicio fluxo
          */
 

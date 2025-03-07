@@ -2,12 +2,27 @@ package com.lima.api.cine.model;
 
 import com.lima.api.cine.enun.StatusAssento;
 import com.lima.api.cine.exception.AssentoIndisponivelException;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "tbl_assento")
 public class Assento {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "numero")
     private int numero;
+
+    @Enumerated(EnumType.STRING)
     private StatusAssento status;
+
+    @ManyToOne
     private Cliente cliente;
+
+    @Deprecated
+    public Assento(){}
 
     public Assento(int numero){
         this.numero = numero;

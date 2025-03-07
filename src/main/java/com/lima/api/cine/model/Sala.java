@@ -1,15 +1,30 @@
 package com.lima.api.cine.model;
 
 import com.lima.api.cine.enun.StatusSala;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "tbl_sala")
 public class Sala {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "nome")
     private String nome;
+
+    @OneToMany
     private List<Assento> assentos = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
     private StatusSala status;
+
+    @Deprecated
+    public Sala(){}
 
     public Sala(String nome){
         this.nome = nome;

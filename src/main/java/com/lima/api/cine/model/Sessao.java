@@ -1,18 +1,40 @@
 package com.lima.api.cine.model;
 
 import com.lima.api.cine.enun.StatusSessao;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "tbl_sessao")
 public class Sessao {
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
     private StatusSessao status;
+
+    @Column(name = "data_hora_inicio")
     private LocalDateTime dataHoraInicio;
+
+    @Column(name = "data_hora_fim")
     private LocalDateTime dataHoraFim;
+
+    @ManyToOne
     private Filme filme;
+
+    @OneToOne
     private Sala sala;
+
+    @Column(name = "valor")
     private BigDecimal valor;
+
+    @Deprecated
+    public Sessao(){}
 
     public Sessao(LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, Filme filme, Sala sala, BigDecimal valor) {
         this.dataHoraInicio = dataHoraInicio;

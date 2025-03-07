@@ -1,16 +1,31 @@
 package com.lima.api.cine.model;
 
 import com.lima.api.cine.enun.IdiomaFilme;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "tbl_filme")
 public class Filme {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "titulo")
     private String titulo;
-    private IdiomaFilme idiomaFilme;
+
+    @Enumerated(EnumType.STRING)
+    private IdiomaFilme idioma;
+
+    @Column(name = "duracao")
     private String duracao;
 
-    public Filme(String titulo, IdiomaFilme idiomaFilme, String duracao) {
+    @Deprecated
+    public Filme(){}
+
+    public Filme(String titulo, IdiomaFilme idioma, String duracao) {
         this.titulo = titulo;
-        this.idiomaFilme = idiomaFilme;
+        this.idioma = idioma;
         this.duracao = duracao;
     }
 
@@ -22,7 +37,7 @@ public class Filme {
     public String toString() {
         return "Filme{" +
                 "titulo='" + titulo + '\'' +
-                ", idiomaFilme=" + idiomaFilme +
+                ", idiomaFilme=" + idioma +
                 ", duracao='" + duracao + '\'' +
                 '}';
     }
