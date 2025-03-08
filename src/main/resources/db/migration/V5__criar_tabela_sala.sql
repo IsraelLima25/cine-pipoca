@@ -1,0 +1,5 @@
+CREATE TABLE tbl_sala (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL
+);

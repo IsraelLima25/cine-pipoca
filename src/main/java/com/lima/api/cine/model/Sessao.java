@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_sessao")
 public class Sessao {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private StatusSessao status;
 
     @Column(name = "data_hora_inicio")

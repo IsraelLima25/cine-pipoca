@@ -21,6 +21,7 @@ public class Sala {
     private List<Assento> assentos = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private StatusSala status;
 
     @Deprecated

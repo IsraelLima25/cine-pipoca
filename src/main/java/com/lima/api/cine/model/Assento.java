@@ -16,6 +16,7 @@ public class Assento {
     private int numero;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private StatusAssento status;
 
     @ManyToOne

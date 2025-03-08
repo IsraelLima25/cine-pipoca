@@ -1,0 +1,4 @@
+CREATE TABLE tbl_pagamento(
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+forma_pagamento VARCHAR(50) NOT NULL
+);

@@ -12,6 +12,7 @@ public class Pagamento {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "forma_pagamento")
     private FormaPagamento formaPagamento;
 
     @Deprecated
