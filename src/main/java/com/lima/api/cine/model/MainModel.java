@@ -2,6 +2,7 @@ package com.lima.api.cine.model;
 
 import com.lima.api.cine.enun.FormaPagamento;
 import com.lima.api.cine.enun.IdiomaFilme;
+import com.lima.api.cine.service.AssentoService;
 import com.lima.api.cine.service.IngressoService;
 
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ public class MainModel {
          * Inicio fluxo
          */
 
-        IngressoService ingressoService = new IngressoService();
+        IngressoService ingressoService = new IngressoService(new AssentoService());
 
         /**
          * Criar sessão

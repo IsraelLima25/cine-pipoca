@@ -6,20 +6,28 @@ import com.lima.api.cine.model.Ingresso;
 import com.lima.api.cine.model.Sessao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+@Service
 public class IngressoService {
 
-    Logger log = LoggerFactory.getLogger(IngressoService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngressoService.class);
+
+    private final AssentoService assentoService;
+
+    public IngressoService(AssentoService assentoService) {
+        this.assentoService = assentoService;
+    }
 
     public void comprar(Cliente cliente, Sessao sessao, int numeroAssento, FormaPagamento formaPagamento){
 
-        log.info("Reservando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
-        reservarAssento(cliente, sessao, numeroAssento);
-        log.info("Assento numero = {} reservado com sucesso para o cliente {}", numeroAssento, cliente.getNome());
+        LOGGER.info("Reservando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
+        assentoService.reservarAssento(cliente, sessao, numeroAssento);
+        LOGGER.info("Assento numero = {} reservado com sucesso para o cliente {}", numeroAssento, cliente.getNome());
 
-        log.info("Gerando ingresso para o filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
+        LOGGER.info("Gerando ingresso para o filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
         Ingresso ingresso = new Ingresso(sessao, false);
-        log.info("""
+        LOGGER.info("""
                 
                 INGRESSO - {}
                 CLIENTE - {}
@@ -27,27 +35,13 @@ public class IngressoService {
                 ASSENTO - {}
                 [GERADO COM SUCESSO]                
                 """, sessao.getFilme().getTitulo(), cliente.getNome(), sessao.getSala().getNome(), numeroAssento);
-        log.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
+        LOGGER.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
         ingresso.pagar(formaPagamento);
-        log.info("Pagamento para ingresso do filme {} do cliente {} realizado com sucesso", sessao.getFilme().getTitulo(), cliente.getNome());
+        LOGGER.info("Pagamento para ingresso do filme {} do cliente {} realizado com sucesso", sessao.getFilme().getTitulo(), cliente.getNome());
 
-        log.info("Ocupando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
-        ocuparAssento(cliente, sessao, numeroAssento);
-        log.info("Assento numero = {} para o cliente {} ocupado com sucesso. Desejamos uma ótima sessão", numeroAssento, cliente.getNome());
+        LOGGER.info("Ocupando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
+        assentoService.ocuparAssento(cliente, sessao, numeroAssento);
+        LOGGER.info("Assento numero = {} para o cliente {} ocupado com sucesso. Desejamos uma ótima sessão", numeroAssento, cliente.getNome());
 
-    }
-
-    // TODO segregar em um service de assentos
-    private void reservarAssento(Cliente cliente, Sessao sessao, int numeroAssento) {
-        sessao.getSala().getAssentos().stream()
-                .filter(assento -> assento.getNumero() == numeroAssento)
-                .findFirst().get().reservar(cliente);
-    }
-
-    // TODO segregar em um service de assentos
-    private void ocuparAssento(Cliente cliente, Sessao sessao, int numeroAssento){
-        sessao.getSala().getAssentos().stream()
-                .filter(assento -> assento.getNumero() == numeroAssento)
-                .findFirst().get().ocupar(cliente);
     }
 }

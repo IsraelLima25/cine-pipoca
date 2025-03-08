@@ -17,7 +17,7 @@ public class Sala {
     @Column(name = "nome")
     private String nome;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "sala")
     private List<Assento> assentos = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -60,7 +60,7 @@ public class Sala {
 
     private void criarAssentos(int quantidadeAssentos) {
         for(int i = 1; i <= quantidadeAssentos; i++){
-            this.assentos.add(new Assento(i));
+            this.assentos.add(new Assento(i, this));
         }
     }
 

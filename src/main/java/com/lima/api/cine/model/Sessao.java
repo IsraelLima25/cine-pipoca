@@ -27,7 +27,8 @@ public class Sessao {
     @ManyToOne
     private Filme filme;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "sala_sessao_id")
     private Sala sala;
 
     @Column(name = "valor")

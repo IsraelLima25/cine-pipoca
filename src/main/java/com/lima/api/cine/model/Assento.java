@@ -20,15 +20,19 @@ public class Assento {
     private StatusAssento status;
 
     @ManyToOne
+    @JoinColumn(name = "sala_id")
+    private Sala sala;
+
+    @ManyToOne
     private Cliente cliente;
 
     @Deprecated
     public Assento(){}
 
-    public Assento(int numero){
+    public Assento(int numero, Sala sala){
+        this.sala = sala;
         this.numero = numero;
         this.status = StatusAssento.VAZIO;
-        this.cliente = new Cliente("DESCONHECIDO");
     }
 
     public synchronized void reservar(Cliente cliente){

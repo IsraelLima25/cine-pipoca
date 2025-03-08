@@ -23,6 +23,7 @@ public class Ingresso {
     private Pagamento pagamento;
 
     @ManyToOne
+    @JoinColumn(name = "cliente_id_ingresso")
     private Cliente cliente;
 
     @ManyToOne
