@@ -13,9 +13,6 @@ public class Ingresso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Sessao sessao;
-
     @Column(name = "meia_entrada")
     private boolean isMeiaEntrada;
 
@@ -27,6 +24,9 @@ public class Ingresso {
 
     @ManyToOne
     private Cliente cliente;
+
+    @ManyToOne
+    private Sessao sessao;
 
     @Deprecated
     public Ingresso(){}

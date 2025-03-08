@@ -27,7 +27,7 @@ public class Sessao {
     @ManyToOne
     private Filme filme;
 
-    @OneToOne
+    @ManyToOne
     private Sala sala;
 
     @Column(name = "valor")
