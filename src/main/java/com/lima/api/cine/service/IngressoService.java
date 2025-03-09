@@ -21,6 +21,18 @@ public class IngressoService {
 
     public void comprar(Cliente cliente, Sessao sessao, int numeroAssento, FormaPagamento formaPagamento){
 
+        /**
+         * 1 - Incluir cliente DB
+         * 2 - Incluir como dados do cliente CPF campo unique
+         * 2 - Buscar sessao DB
+         * 3 - Tornar forma de pagamento uma enum e não uma tabela. Na enum pode ter um abstract para um contrato de pagamento que os tipos assinam
+         * 4 - Reservar o assento
+         * 5 - Criar forma de pagamento
+         * 6 - Criar Ingresso
+         * 7 - Pagar ingresso(call gateway passando a forma de pagamento)
+         * 8 - Ocupar o assento
+         */
+
         LOGGER.info("Reservando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
         assentoService.reservarAssento(cliente, sessao, numeroAssento);
         LOGGER.info("Assento numero = {} reservado com sucesso para o cliente {}", numeroAssento, cliente.getNome());
