@@ -12,14 +12,12 @@ services:
       MYSQL_USER: ilima
       MYSQL_PASSWORD: user
     volumes:
-      - ./mysql:/docker-entrypoint-initdb.d
+      - ./mysql-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
     networks:
       - business
-
-volumes:
-  mysql:
 
 networks:
   business:
