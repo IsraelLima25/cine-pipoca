@@ -1,6 +1,7 @@
 package com.lima.api.cine.model;
 
-import com.lima.api.cine.enun.IdiomaFilme;
+import com.lima.api.cine.enums.FormaPagamento;
+import com.lima.api.cine.enums.TipoIdiomaFilme;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class IngressoTest {
         Sessao sessao = criarSessaoCenario();
 
         //execução
-        Ingresso ingresso = new Ingresso(sessao, true);
+        Ingresso ingresso = new Ingresso(true, FormaPagamento.PIX, new Cliente("Joao"), sessao);
 
         //verificação
         assertEquals(new BigDecimal("20.00"), ingresso.getValorTotal());
@@ -38,7 +39,7 @@ class IngressoTest {
         Sessao sessao = criarSessaoCenario();
 
         //execução
-        Ingresso ingresso = new Ingresso(sessao, false);
+        Ingresso ingresso = new Ingresso(false, FormaPagamento.PIX, new Cliente("Joao"), sessao);
 
         //verificação
         assertEquals(new BigDecimal("40.00"), ingresso.getValorTotal());
@@ -47,7 +48,7 @@ class IngressoTest {
 
     private Sessao criarSessaoCenario(){
 
-        Filme filme = new Filme("O auto da compadecida 2", IdiomaFilme.DUBLADO, "2h");
+        Filme filme = new Filme("O auto da compadecida 2", TipoIdiomaFilme.DUBLADO, "2h");
         Sala sala = new Sala("A");
         LocalDateTime agora = LocalDateTime.now();
         LocalDateTime dataHoraInicio = agora.withHour(16).withMinute(0).withSecond(0).withNano(0);

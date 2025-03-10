@@ -1,4 +1,4 @@
-package com.lima.api.cine.enun;
+package com.lima.api.cine.enums;
 
 public enum StatusSala {
     ABERTA,

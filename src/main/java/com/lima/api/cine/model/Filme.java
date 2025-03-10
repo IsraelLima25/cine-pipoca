@@ -1,6 +1,6 @@
 package com.lima.api.cine.model;
 
-import com.lima.api.cine.enun.IdiomaFilme;
+import com.lima.api.cine.enums.TipoIdiomaFilme;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,7 +15,7 @@ public class Filme {
     private String titulo;
 
     @Enumerated(EnumType.STRING)
-    private IdiomaFilme idioma;
+    private TipoIdiomaFilme idioma;
 
     @Column(name = "duracao")
     private String duracao;
@@ -23,7 +23,7 @@ public class Filme {
     @Deprecated
     public Filme(){}
 
-    public Filme(String titulo, IdiomaFilme idioma, String duracao) {
+    public Filme(String titulo, TipoIdiomaFilme idioma, String duracao) {
         this.titulo = titulo;
         this.idioma = idioma;
         this.duracao = duracao;

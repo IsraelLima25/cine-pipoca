@@ -3,7 +3,6 @@
 -- select * from db_cine_pipoca.tbl_sala ts;
 -- select * from db_cine_pipoca.tbl_assento ta;
 -- select * from db_cine_pipoca.tbl_sessao ts;
--- select * from db_cine_pipoca.tbl_pagamento tp;
 -- select * from db_cine_pipoca.tbl_cliente tc;
 -- select * from db_cine_pipoca.tbl_ingresso ti;
 
@@ -31,11 +30,8 @@ insert into db_cine_pipoca.tbl_assento (numero, status, cliente_id, sala_id) val
 insert into db_cine_pipoca.tbl_assento (numero, status, cliente_id, sala_id) values (10, "VAZIO", null, 1);
 
 -- Criar sessão
-insert into db_cine_pipoca.tbl_sessao (status, data_hora_inicio, data_hora_fim, valor, filme_id, sala_sessao_id) 
+insert into db_cine_pipoca.tbl_sessao (status, data_hora_inicio, data_hora_fim, valor, filme_id, sala_sessao_id)
 values ("DISPONIVEL", '2025-03-10 14:30:00', '2025-03-10 16:30:00', '40.00', 1, 1);
 
--- Criar pagamento
-insert into db_cine_pipoca.tbl_pagamento (forma_pagamento) values ("PIX");
-
 -- Comprar ingresso
-insert into db_cine_pipoca.tbl_ingresso (meia_entrada, valor_total, pagamento_id, cliente_id_ingresso, sessao_id) values (0, '40.00', 1, 1, 1);
+insert into db_cine_pipoca.tbl_ingresso (meia_entrada, valor_total, cliente_id_ingresso, sessao_id, forma_pagamento) values (0, '40.00', 1, 1, "PIX");

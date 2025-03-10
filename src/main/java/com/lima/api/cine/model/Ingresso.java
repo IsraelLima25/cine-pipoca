@@ -1,9 +1,12 @@
 package com.lima.api.cine.model;
 
-import com.lima.api.cine.enun.FormaPagamento;
+import com.lima.api.cine.enums.FormaPagamento;
+import com.lima.api.cine.enums.StatusPagamento;
+import com.lima.api.cine.enums.StatusValidade;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_ingresso")
@@ -19,8 +22,8 @@ public class Ingresso {
     @Column(name = "valor_total")
     private BigDecimal valorTotal;
 
-    @ManyToOne
-    private Pagamento pagamento;
+    @Enumerated(EnumType.STRING)
+    private FormaPagamento formaPagamento;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id_ingresso")
@@ -29,13 +32,27 @@ public class Ingresso {
     @ManyToOne
     private Sessao sessao;
 
+    @Enumerated(EnumType.STRING)
+    private StatusValidade statusValidade;
+
+    @Enumerated(EnumType.STRING)
+    private StatusPagamento statusPagamento;
+
+    @Column(name = "expira_em")
+    private LocalDateTime expiraEm;
+
     @Deprecated
     public Ingresso(){}
 
-    public Ingresso(Sessao sessao, boolean isMeiaEntrada) {
-        this.sessao = sessao;
+    public Ingresso(boolean isMeiaEntrada, FormaPagamento formaPagamento, Cliente cliente, Sessao sessao) {
         this.isMeiaEntrada = isMeiaEntrada;
+        this.formaPagamento = formaPagamento;
+        this.cliente = cliente;
+        this.sessao = sessao;
+        this.expiraEm = LocalDateTime.now().plusMinutes(15);
         calcularValorTotal();
+        this.statusValidade = StatusValidade.NAO_EXPIRADO;
+        this.statusPagamento = StatusPagamento.AGUARDANDO;
     }
 
     public BigDecimal getValorTotal() {
@@ -46,8 +63,24 @@ public class Ingresso {
         return isMeiaEntrada;
     }
 
-    public void pagar(FormaPagamento formaPagamento){
-        this.pagamento = new Pagamento(formaPagamento);
+    public boolean isDataExpirada(){
+        return LocalDateTime.now().isAfter(this.expiraEm);
+    }
+
+    public void expirar(){
+        this.statusValidade = StatusValidade.EXPIRADO;
+    }
+
+    public void pagar(){
+        this.formaPagamento.executar(valorTotal);
+    }
+
+    public Sessao getSessao() {
+        return sessao;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
     }
 
     private void calcularValorTotal() {

@@ -1,7 +1,6 @@
-package com.lima.api.cine.enun;
+package com.lima.api.cine.enums;
 
 public enum StatusAssento {
-
     VAZIO,
     RESERVADO,
     OCUPADO

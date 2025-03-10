@@ -1,6 +1,6 @@
 package com.lima.api.cine.model;
 
-import com.lima.api.cine.enun.StatusSala;
+import com.lima.api.cine.enums.StatusSala;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

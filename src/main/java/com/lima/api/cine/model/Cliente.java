@@ -10,6 +10,9 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "cpf", unique = true, length = 11)
+    private String cpf;
+
     @Column(name = "nome")
     private String nome;
 
@@ -22,5 +25,9 @@ public class Cliente {
 
     public String getNome() {
         return nome;
+    }
+
+    public String getCpf() {
+        return cpf;
     }
 }

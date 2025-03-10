@@ -1,6 +1,6 @@
 package com.lima.api.cine.model;
 
-import com.lima.api.cine.enun.StatusSessao;
+import com.lima.api.cine.enums.StatusSessao;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -69,6 +69,14 @@ public class Sessao {
 
     public StatusSessao getStatus() {
         return status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getDataHoraInicio() {
+        return dataHoraInicio;
     }
 
     @Override

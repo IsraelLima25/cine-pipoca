@@ -1,7 +1,8 @@
 package com.lima.api.cine.model;
 
-import com.lima.api.cine.enun.StatusAssento;
+import com.lima.api.cine.enums.StatusAssento;
 import com.lima.api.cine.exception.AssentoIndisponivelException;
+import com.lima.api.cine.exception.BusinessException;
 import jakarta.persistence.*;
 
 @Entity
@@ -35,31 +36,29 @@ public class Assento {
         this.status = StatusAssento.VAZIO;
     }
 
-    public synchronized void reservar(Cliente cliente){
+    public void reservar(Cliente cliente){
 
         if(status != StatusAssento.VAZIO){
             throw new AssentoIndisponivelException("Este assento já foi reservado");
         }
 
-        System.out.println(Thread.currentThread().getName() + " passou na verificação do assento vazio...");
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         this.cliente = cliente;
         this.status = StatusAssento.RESERVADO;
-
-        System.out.println(Thread.currentThread().getName() + " reservou o assento para " + cliente.getNome());
     }
 
-    public void ocupar(Cliente cliente) {
+    public void confirmarReserva(Cliente cliente) {
         if(status != StatusAssento.RESERVADO){
             throw new AssentoIndisponivelException("Este assento já foi ocupado");
         }
         this.cliente = cliente;
         this.status = StatusAssento.OCUPADO;
+    }
+
+    public void cancelarReserva(){
+        if(this.status == StatusAssento.OCUPADO){
+            throw new BusinessException("Não podemos cancelar porque o pagamento já foi realizado, não aceitamos devolução");
+        }
+        this.status = StatusAssento.VAZIO;
     }
 
     public int getNumero() {
@@ -68,6 +67,10 @@ public class Assento {
 
     public StatusAssento getStatus() {
         return status;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
     }
 
     @Override

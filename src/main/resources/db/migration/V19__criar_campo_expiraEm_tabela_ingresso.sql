@@ -1,0 +1,2 @@
+ALTER TABLE tbl_ingresso
+ADD COLUMN expira_em TIMESTAMP NOT NULL;
