@@ -1,5 +1,7 @@
 package com.lima.api.cine.model;
 
+import com.lima.api.cine.controller.response.AssentoResponse;
+import com.lima.api.cine.controller.response.SalaResponse;
 import com.lima.api.cine.enums.StatusSala;
 import jakarta.persistence.*;
 
@@ -45,8 +47,17 @@ public class Sala {
         this.status = StatusSala.ABERTA;
     }
 
+    public StatusSala getStatus() {
+        return status;
+    }
+
     public void fecharSala(){
         this.status = StatusSala.FECHADA;
+    }
+
+    public SalaResponse toRepresentacaoView(){
+        List<AssentoResponse> assentos = this.assentos.stream().map(Assento::toRepresentacaoView).toList();
+        return new SalaResponse(nome, status, assentos);
     }
 
     @Override

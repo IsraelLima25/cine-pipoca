@@ -22,7 +22,7 @@ class IngressoTest {
         Sessao sessao = criarSessaoCenario();
 
         //execução
-        Ingresso ingresso = new Ingresso(true, FormaPagamento.PIX, new Cliente("Joao"), sessao);
+        Ingresso ingresso = new Ingresso(true, FormaPagamento.PIX, sessao, null);
 
         //verificação
         assertEquals(new BigDecimal("20.00"), ingresso.getValorTotal());
@@ -39,7 +39,7 @@ class IngressoTest {
         Sessao sessao = criarSessaoCenario();
 
         //execução
-        Ingresso ingresso = new Ingresso(false, FormaPagamento.PIX, new Cliente("Joao"), sessao);
+        Ingresso ingresso = new Ingresso(false, FormaPagamento.PIX, sessao, null);
 
         //verificação
         assertEquals(new BigDecimal("40.00"), ingresso.getValorTotal());

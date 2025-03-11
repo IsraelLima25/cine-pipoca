@@ -1,5 +1,6 @@
 package com.lima.api.cine.model;
 
+import com.lima.api.cine.controller.response.FilmeResponse;
 import com.lima.api.cine.enums.TipoIdiomaFilme;
 import jakarta.persistence.*;
 
@@ -29,8 +30,24 @@ public class Filme {
         this.duracao = duracao;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getTitulo() {
         return titulo;
+    }
+
+    public String getDuracao() {
+        return duracao;
+    }
+
+    public TipoIdiomaFilme getIdioma() {
+        return idioma;
+    }
+
+    public FilmeResponse toRepresentacaoView(){
+        return new FilmeResponse(id, titulo, idioma, duracao);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.lima.api.cine.model;
 
+import com.lima.api.cine.controller.response.SessaoResponse;
 import com.lima.api.cine.enums.StatusSessao;
 import jakarta.persistence.*;
 
@@ -35,7 +36,7 @@ public class Sessao {
     private BigDecimal valor;
 
     @Deprecated
-    public Sessao(){}
+    public Sessao(){ }
 
     public Sessao(LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, Filme filme, Sala sala, BigDecimal valor) {
         this.dataHoraInicio = dataHoraInicio;
@@ -44,15 +45,6 @@ public class Sessao {
         this.sala = sala;
         this.valor = valor;
         this.abrirSessao();
-    }
-
-    public void abrirSessao(){
-        this.status = StatusSessao.DISPONIVEL;
-        this.sala.abrirSala();
-    }
-
-    public void fecharSessao(){
-        this.status = StatusSessao.ESGOTADA;
     }
 
     public Sala getSala() {
@@ -77,6 +69,28 @@ public class Sessao {
 
     public LocalDateTime getDataHoraInicio() {
         return dataHoraInicio;
+    }
+
+    public LocalDateTime getDataHoraFim() {
+        return dataHoraFim;
+    }
+
+    // essa mistura de ingês com português está ficando ótima rsrs
+    public SessaoResponse toRepresentacaoView(){
+        //TODO pq n um MapStuct?? ....
+        return new SessaoResponse(id, status, dataHoraInicio, dataHoraFim,
+                filme.toRepresentacaoView(),
+                sala.toRepresentacaoView(),
+                valor);
+    }
+
+    public void abrirSessao(){
+        this.status = StatusSessao.DISPONIVEL;
+        this.sala.abrirSala();
+    }
+
+    public void fecharSessao(){
+        this.status = StatusSessao.ESGOTADA;
     }
 
     @Override

@@ -3,10 +3,12 @@ package com.lima.api.cine.model;
 import com.lima.api.cine.enums.FormaPagamento;
 import com.lima.api.cine.enums.StatusPagamento;
 import com.lima.api.cine.enums.StatusValidade;
+import com.lima.api.cine.exception.BusinessException;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tbl_ingresso")
@@ -26,11 +28,7 @@ public class Ingresso {
     private FormaPagamento formaPagamento;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id_ingresso")
-    private Cliente cliente;
-
-    @ManyToOne
-    private Sessao sessao;
+    private Reserva reserva;
 
     @Enumerated(EnumType.STRING)
     private StatusValidade statusValidade;
@@ -44,11 +42,10 @@ public class Ingresso {
     @Deprecated
     public Ingresso(){}
 
-    public Ingresso(boolean isMeiaEntrada, FormaPagamento formaPagamento, Cliente cliente, Sessao sessao) {
+    public Ingresso(boolean isMeiaEntrada, FormaPagamento formaPagamento, Sessao sessao, Reserva reserva) {
         this.isMeiaEntrada = isMeiaEntrada;
         this.formaPagamento = formaPagamento;
-        this.cliente = cliente;
-        this.sessao = sessao;
+        this.reserva = reserva;
         this.expiraEm = LocalDateTime.now().plusMinutes(15);
         calcularValorTotal();
         this.statusValidade = StatusValidade.NAO_EXPIRADO;
@@ -63,6 +60,10 @@ public class Ingresso {
         return isMeiaEntrada;
     }
 
+    public Reserva getReserva() {
+        return reserva;
+    }
+
     public boolean isDataExpirada(){
         return LocalDateTime.now().isAfter(this.expiraEm);
     }
@@ -71,20 +72,18 @@ public class Ingresso {
         this.statusValidade = StatusValidade.EXPIRADO;
     }
 
-    public void pagar(){
+    public String pagar(){
+        if(statusPagamento == StatusPagamento.PAGO || statusPagamento == StatusPagamento.CANCELADO){
+            throw new BusinessException("Não foi possivel processar o pagamento. Este ingresso ou já foi pago ou está cancelado.");
+        }
         this.formaPagamento.executar(valorTotal);
-    }
+        this.statusPagamento = StatusPagamento.PAGO;
 
-    public Sessao getSessao() {
-        return sessao;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
+        return UUID.randomUUID().toString();
     }
 
     private void calcularValorTotal() {
         this.valorTotal = isMeiaEntrada ?
-                sessao.getValor().divide(new BigDecimal("2")) : sessao.getValor();
+                reserva.getSessao().getValor().divide(new BigDecimal("2")) : reserva.getSessao().getValor();
     }
 }

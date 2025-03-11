@@ -1,7 +1,6 @@
 package com.lima.api.cine.service;
 
 import com.lima.api.cine.enums.FormaPagamento;
-import com.lima.api.cine.model.Cliente;
 import com.lima.api.cine.model.Ingresso;
 import com.lima.api.cine.model.Sessao;
 import com.lima.api.cine.repository.IngressoRepository;
@@ -22,41 +21,35 @@ public class IngressoService {
     }
 
     @Transactional
-    public Ingresso emitirIngresso(Sessao sessao, Cliente cliente, boolean meiaEntrada, FormaPagamento formaPagamento, int numeroAssento){
-        LOGGER.info("Gerando ingresso para o filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
-        Ingresso ingresso = new Ingresso(meiaEntrada, formaPagamento, cliente, sessao);
+    public Ingresso emitirIngresso(Sessao sessao, boolean meiaEntrada, FormaPagamento formaPagamento, int numeroAssento){
+        LOGGER.info("Gerando ingresso para o filme {} do cliente {}", sessao.getFilme().getTitulo());
+        Ingresso ingresso = new Ingresso(meiaEntrada, formaPagamento, sessao, null);
         ingressoRepository.save(ingresso);
         LOGGER.info("""
                 
-                INGRESSO - {}
-                CLIENTE - {}
+                INGRESSO - {}                
                 SALA - {}
                 ASSENTO - {}
                 [GERADO COM SUCESSO]                
-                """, sessao.getFilme().getTitulo(), cliente.getNome(), sessao.getSala().getNome(), numeroAssento);
+                """, sessao.getFilme().getTitulo(), sessao.getSala().getNome(), numeroAssento);
 
         return ingresso;
     }
 
-    public void pagar(Long idIngresso) {
+    public String pagar(Ingresso ingresso) {
 
+        LOGGER.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {}",
+                ingresso.getReserva().getSessao().getFilme().getTitulo());
 
+        String codigoPagamento = ingresso.pagar();
+        LOGGER.info("Pagamento código = {} para ingresso do filme {}  realizado com sucesso.", codigoPagamento,
+                ingresso.getReserva().getSessao().getFilme().getTitulo());
 
-        /**
-         * 7 - Pagar ingresso(call gateway passando a forma de pagamento)
-         * 8 - Se o pagamento foi realizado com sucessp ocupar o assento caso contrario devolver o assento para o status Vazio
-         * 9 - A entidade pagamento deve ter um status sobre o processamento do pagamento(PAGO, NÃO_PAGO...)
-         */
+        LOGGER.info("Ocupando assento numero = {}", ingresso.getReserva().getAssento().getNumero());
+        ingresso.getReserva().getAssento().confirmarReserva();
+        LOGGER.info("Assento numero = {} ocupado com sucesso. Desejamos uma ótima sessão",
+                ingresso.getReserva().getAssento().getNumero());
 
-        //ingresso.pagar();
-
-        //LOGGER.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {} do cliente {}", sessao.getFilme().getTitulo(), cliente.getNome());
-        // ingresso.pagar(formaPagamento);
-        //LOGGER.info("Pagamento para ingresso do filme {} do cliente {} realizado com sucesso", sessao.getFilme().getTitulo(), cliente.getNome());
-
-        //LOGGER.info("Ocupando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
-        //assentoService.ocuparAssento(cliente, sessao, numeroAssento);
-        //LOGGER.info("Assento numero = {} para o cliente {} ocupado com sucesso. Desejamos uma ótima sessão", numeroAssento, cliente.getNome());
-        //return null;
+        return codigoPagamento;
     }
 }

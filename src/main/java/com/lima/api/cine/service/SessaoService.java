@@ -1,12 +1,11 @@
 package com.lima.api.cine.service;
 
-import com.lima.api.cine.enums.FormaPagamento;
 import com.lima.api.cine.exception.AssentoIndisponivelException;
 import com.lima.api.cine.exception.BusinessException;
-import com.lima.api.cine.model.Cliente;
-import com.lima.api.cine.model.Ingresso;
+import com.lima.api.cine.model.Assento;
+import com.lima.api.cine.model.Reserva;
 import com.lima.api.cine.model.Sessao;
-import com.lima.api.cine.repository.IngressoRepository;
+import com.lima.api.cine.repository.ReservaRepository;
 import com.lima.api.cine.repository.SessaoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,36 +17,30 @@ public class SessaoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessaoService.class);
 
-    private final ClienteService clienteService;
     private final SessaoRepository sessaoRepository;
-    private final IngressoService ingressoService;
+    private ReservaRepository reservaRepository;
 
-    public SessaoService(ClienteService clienteService, SessaoRepository sessaoRepository, IngressoService ingressoService) {
-        this.clienteService = clienteService;
+    public SessaoService(SessaoRepository sessaoRepository) {
         this.sessaoRepository = sessaoRepository;
-        this.ingressoService = ingressoService;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Ingresso reservarAssento(Cliente cliente, Sessao sessao, int numeroAssento, FormaPagamento formaPagamento, boolean meiaEntrada){
+    public Reserva reservarAssento(Sessao sessao, int numeroAssento){
 
         try{
-            LOGGER.info("Iniciando reserva assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
-            Cliente clienteModel = clienteService.buscarOuSalvar(cliente);
-            Sessao sessaoModel = sessaoRepository.findById(sessao.getId())
-                    .orElseThrow(() -> {
-                        LOGGER.error("Sessão não encontrada para o ID: {}", sessao.getId());
-                        return new BusinessException("Sessão não encontrada para o ID: " + sessao.getId());
-                    });
-
-            LOGGER.info("Reservando assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
-            sessao.getSala().getAssentos().stream()
+            LOGGER.info("Reservando assento numero = {} para o cliente {}", numeroAssento);
+            Assento assentoReserva = sessao.getSala().getAssentos().stream()
                     .filter(assento -> assento.getNumero() == numeroAssento)
-                    .findFirst().get().reservar(cliente);
+                    .findFirst().get();
 
-            LOGGER.info("Assento numero = {} reservado com sucesso para o cliente {}", numeroAssento, cliente.getNome());
+            assentoReserva.reservar();
 
-            return ingressoService.emitirIngresso(sessao, cliente, meiaEntrada, formaPagamento, numeroAssento);
+            Reserva reserva = new Reserva(sessao, assentoReserva);
+            reservaRepository.save(reserva);
+
+            LOGGER.info("Assento numero = {} reservado com sucesso para o cliente {}", numeroAssento);
+            return reserva;
+
         }catch (AssentoIndisponivelException assentoIndisponivelException){
             LOGGER.error("Assento indisponivel");
             throw assentoIndisponivelException;
@@ -56,23 +49,17 @@ public class SessaoService {
             throw new BusinessException("Erro ao reservar assento");
         }
     }
-    public void cancelarReservaAssento(Sessao sessao, int numeroAssento, Cliente cliente){
+    public void cancelarReservaAssento(Sessao sessao, int numeroAssento){
 
         try{
-            LOGGER.info("Iniciando cancelamento da reserva do assento numero = {} para o cliente {}", numeroAssento, cliente.getNome());
+            LOGGER.info("Iniciando cancelamento da reserva do assento numero = {} para o cliente {}", numeroAssento);
             sessao.getSala().getAssentos().stream()
                     .filter(assento -> assento.getNumero() == numeroAssento)
                     .findFirst().get().cancelarReserva();
-            LOGGER.info("Cancelamento da reserva do assento numero = {} para o cliente {} reservado com sucesso", numeroAssento, cliente.getNome());
+            LOGGER.info("Cancelamento da reserva do assento numero = {} para o cliente {} reservado com sucesso", numeroAssento);
         }catch (BusinessException ex){
             LOGGER.error("Não podemos cancelar porque o pagamento já foi realizado, não aceitamos devolução");
             throw ex;
         }
-    }
-
-    private void confirmarReserva(Cliente cliente, Sessao sessao, int numeroAssento){
-        sessao.getSala().getAssentos().stream()
-                .filter(assento -> assento.getNumero() == numeroAssento)
-                .findFirst().get().confirmarReserva(cliente);
     }
 }

@@ -15,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
-public class ReservaJob {
+public class IngressoScheduled {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReservaJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngressoScheduled.class);
 
     private final IngressoRepository ingressoRepository;
     private final SessaoService sessaoService;
 
-    public ReservaJob(IngressoRepository ingressoRepository, SessaoService sessaoService) {
+    public IngressoScheduled(IngressoRepository ingressoRepository, SessaoService sessaoService) {
         this.ingressoRepository = ingressoRepository;
         this.sessaoService = sessaoService;
     }
@@ -33,10 +33,14 @@ public class ReservaJob {
         try {
             LOGGER.info("Iniciando execução do job para cancelar reservas de ingressos vencidos");
             List<Ingresso> ingressos = ingressoRepository.listarIngressosNaoExpirados(StatusValidade.NAO_EXPIRADO);
+
             ingressos.forEach(ingresso -> {
                 if (ingresso.isDataExpirada()) {
                     ingresso.expirar();
-                    LOGGER.info("Ingresso do cliente {} expirado com sucesso", ingresso.getCliente());
+                    LOGGER.info("Ingresso do cliente {} expirado com sucesso");
+
+
+
 
                     ingresso.getSessao().getSala().getAssentos().stream()
                             .filter(assento -> assento.getCliente().getCpf().equals(ingresso.getCliente().getCpf()))
@@ -46,6 +50,9 @@ public class ReservaJob {
                                         ingresso.getSessao().getFilme().getTitulo());
                                 sessaoService.cancelarReservaAssento(ingresso.getSessao(), assento.getNumero(), ingresso.getCliente());
                             });
+
+
+
                 }
             });
             LOGGER.info("Job para cancelar reservas de ingressos vencidos executado com sucesso");
@@ -53,5 +60,7 @@ public class ReservaJob {
             LOGGER.error("Erro ao executar job para cancelar reservas de ingressos vencidos", ex.getMessage());
             throw new BusinessException("Erro ao executar job para cancelar reservas de ingressos vencidos");
         }
+
+
     }
 }

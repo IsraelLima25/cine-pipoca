@@ -1,5 +1,6 @@
 package com.lima.api.cine.model;
 
+import com.lima.api.cine.controller.response.AssentoResponse;
 import com.lima.api.cine.enums.StatusAssento;
 import com.lima.api.cine.exception.AssentoIndisponivelException;
 import com.lima.api.cine.exception.BusinessException;
@@ -24,9 +25,6 @@ public class Assento {
     @JoinColumn(name = "sala_id")
     private Sala sala;
 
-    @ManyToOne
-    private Cliente cliente;
-
     @Deprecated
     public Assento(){}
 
@@ -36,21 +34,19 @@ public class Assento {
         this.status = StatusAssento.VAZIO;
     }
 
-    public void reservar(Cliente cliente){
+    public void reservar(){
 
         if(status != StatusAssento.VAZIO){
-            throw new AssentoIndisponivelException("Este assento já foi reservado");
+            throw new AssentoIndisponivelException("Este assento já foi reservado!");
         }
 
-        this.cliente = cliente;
         this.status = StatusAssento.RESERVADO;
     }
 
-    public void confirmarReserva(Cliente cliente) {
+    public void confirmarReserva() {
         if(status != StatusAssento.RESERVADO){
-            throw new AssentoIndisponivelException("Este assento já foi ocupado");
+            throw new AssentoIndisponivelException("Este assento já foi ocupado!");
         }
-        this.cliente = cliente;
         this.status = StatusAssento.OCUPADO;
     }
 
@@ -69,8 +65,8 @@ public class Assento {
         return status;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public AssentoResponse toRepresentacaoView(){
+        return new AssentoResponse(status, numero);
     }
 
     @Override
@@ -78,7 +74,6 @@ public class Assento {
         return "Assento{" +
                 "numero=" + numero +
                 ", status=" + status +
-                ", cliente=" + cliente.getNome() +
                 '}';
     }
 }
