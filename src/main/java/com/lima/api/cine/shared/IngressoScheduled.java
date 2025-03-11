@@ -1,5 +1,6 @@
 package com.lima.api.cine.shared;
 
+import com.lima.api.cine.enums.StatusPagamento;
 import com.lima.api.cine.enums.StatusValidade;
 import com.lima.api.cine.exception.BusinessException;
 import com.lima.api.cine.model.Ingresso;
@@ -33,7 +34,7 @@ public class IngressoScheduled {
     public void liberarReservasExpiradas(){
         try {
             LOGGER.info("Iniciando execução do job para cancelar reservas de ingressos vencidos");
-            List<Ingresso> ingressos = ingressoRepository.listarIngressosNaoExpirados(StatusValidade.NAO_EXPIRADO);
+            List<Ingresso> ingressos = ingressoRepository.listarIngressosNaoExpirados(StatusValidade.NAO_EXPIRADO, StatusPagamento.AGUARDANDO);
 
             ingressos.forEach(ingresso -> {
                 if (ingresso.isDataExpirada()) {
@@ -50,7 +51,7 @@ public class IngressoScheduled {
             });
             LOGGER.info("Job para cancelar reservas de ingressos vencidos executado com sucesso");
         }catch (Exception ex){
-            LOGGER.error("Erro ao executar job para cancelar reservas de ingressos vencidos", ex.getMessage());
+            LOGGER.error("Erro ao executar job para cancelar reservas de ingressos vencidos", ex);
             throw new BusinessException("Erro ao executar job para cancelar reservas de ingressos vencidos");
         }
     }

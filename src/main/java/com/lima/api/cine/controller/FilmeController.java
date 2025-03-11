@@ -20,6 +20,7 @@ public class FilmeController {
         this.filmeRepository = filmeRepository;
     }
 
+    // TODO expor uuid ao invès do indentity da tabela do banco de dados
     @GetMapping
     public ResponseEntity<List<FilmeResponse>> listarTodos(){
 

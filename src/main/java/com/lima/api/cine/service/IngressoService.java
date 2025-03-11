@@ -2,7 +2,7 @@ package com.lima.api.cine.service;
 
 import com.lima.api.cine.enums.FormaPagamento;
 import com.lima.api.cine.model.Ingresso;
-import com.lima.api.cine.model.Sessao;
+import com.lima.api.cine.model.Reserva;
 import com.lima.api.cine.repository.IngressoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +21,9 @@ public class IngressoService {
     }
 
     @Transactional
-    public Ingresso emitirIngresso(Sessao sessao, boolean meiaEntrada, FormaPagamento formaPagamento, int numeroAssento){
-        LOGGER.info("Gerando ingresso para o filme {} do cliente {}", sessao.getFilme().getTitulo());
-        Ingresso ingresso = new Ingresso(meiaEntrada, formaPagamento, sessao, null);
+    public Ingresso emitirIngresso(Reserva reserva, boolean meiaEntrada, FormaPagamento formaPagamento, int numeroAssento){
+        LOGGER.info("Gerando ingresso para o filme {} do cliente {}", reserva.getSessao().getFilme().getTitulo());
+        Ingresso ingresso = new Ingresso(meiaEntrada, formaPagamento, reserva.getSessao(), reserva);
         ingressoRepository.save(ingresso);
         LOGGER.info("""
                 
@@ -31,11 +31,16 @@ public class IngressoService {
                 SALA - {}
                 ASSENTO - {}
                 [GERADO COM SUCESSO]                
-                """, sessao.getFilme().getTitulo(), sessao.getSala().getNome(), numeroAssento);
+                """, reserva.getSessao().getFilme().getTitulo(), reserva.getSessao().getSala().getNome(), numeroAssento);
 
         return ingresso;
     }
 
+    // TODO fazer tratamento de excessões personalizado
+    // TODO averiguar as transações distribuidas
+    // TODO melhorar a bateria de testes buscando mais confiabilidade na descoberta de bugs
+
+    @Transactional(rollbackFor = Exception.class)
     public String pagar(Ingresso ingresso) {
 
         LOGGER.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {}",

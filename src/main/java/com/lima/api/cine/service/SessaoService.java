@@ -18,10 +18,11 @@ public class SessaoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessaoService.class);
 
     private final SessaoRepository sessaoRepository;
-    private ReservaRepository reservaRepository;
+    private final ReservaRepository reservaRepository;
 
-    public SessaoService(SessaoRepository sessaoRepository) {
+    public SessaoService(SessaoRepository sessaoRepository, ReservaRepository reservaRepository) {
         this.sessaoRepository = sessaoRepository;
+        this.reservaRepository = reservaRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -45,7 +46,7 @@ public class SessaoService {
             LOGGER.error("Assento indisponivel");
             throw assentoIndisponivelException;
         }catch (Exception ex){
-            LOGGER.error("Erro ao reservar assento");
+            LOGGER.error("Erro ao reservar assento", ex);
             throw new BusinessException("Erro ao reservar assento");
         }
     }

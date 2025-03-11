@@ -101,7 +101,9 @@ public class SessaoController {
 
         LOGGER.info("Iniciando emissão de ingressso para a sessao id = {} e assento = {}", request.idSessao(), request.numeroAssento());
         Ingresso ingressoEmitido = ingressoService
-                .emitirIngresso(sessao, request.isMeiaEntrada(), request.formaPagamento(), request.numeroAssento());
+                .emitirIngresso(reserva, request.isMeiaEntrada(), request.formaPagamento(), request.numeroAssento());
+
+        // TODO retornar uma representação e não o model!!!
 
         return ResponseEntity.ok(ingressoEmitido);
     }

@@ -18,6 +18,9 @@ public class Reserva {
     @JoinColumn(name = "id_assento_reserva")
     private Assento assento;
 
+    @Deprecated
+    public Reserva(){ }
+
     public Reserva(Sessao sessao, Assento assento) {
         this.sessao = sessao;
         this.assento = assento;
