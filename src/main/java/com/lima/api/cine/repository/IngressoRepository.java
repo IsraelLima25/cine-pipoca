@@ -12,6 +12,10 @@ import java.util.List;
 @Repository
 public interface IngressoRepository extends JpaRepository<Ingresso, Long> {
 
-    @Query("FROM Ingresso ing JOIN FETCH ing.sessao ses JOIN FETCH ses.sala sal JOIN FETCH ing.cliente cli WHERE ing.statusValidade = :status")
+    @Query("""
+            FROM Ingresso ingresso JOIN FETCH
+            ingresso.reserva reserva JOIN FETCH
+            reserva.assento assento            
+            """)
     List<Ingresso> listarIngressosNaoExpirados(@Param("status") StatusValidade status);
 }

@@ -76,6 +76,9 @@ public class Ingresso {
         if(statusPagamento == StatusPagamento.PAGO || statusPagamento == StatusPagamento.CANCELADO){
             throw new BusinessException("Não foi possivel processar o pagamento. Este ingresso ou já foi pago ou está cancelado.");
         }
+        if(statusValidade == StatusValidade.EXPIRADO){
+            throw new BusinessException("Este ingresso expirou! Você perdeu o seu lugar na sessão. Favor emitir outro ingresso.");
+        }
         this.formaPagamento.executar(valorTotal);
         this.statusPagamento = StatusPagamento.PAGO;
 

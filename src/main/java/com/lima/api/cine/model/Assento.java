@@ -69,6 +69,10 @@ public class Assento {
         return new AssentoResponse(status, numero);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Assento{" +

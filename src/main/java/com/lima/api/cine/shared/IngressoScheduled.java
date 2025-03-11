@@ -3,6 +3,7 @@ package com.lima.api.cine.shared;
 import com.lima.api.cine.enums.StatusValidade;
 import com.lima.api.cine.exception.BusinessException;
 import com.lima.api.cine.model.Ingresso;
+import com.lima.api.cine.model.Reserva;
 import com.lima.api.cine.repository.IngressoRepository;
 import com.lima.api.cine.service.SessaoService;
 import org.slf4j.Logger;
@@ -37,22 +38,14 @@ public class IngressoScheduled {
             ingressos.forEach(ingresso -> {
                 if (ingresso.isDataExpirada()) {
                     ingresso.expirar();
-                    LOGGER.info("Ingresso do cliente {} expirado com sucesso");
+                    LOGGER.info("Ingresso expirado com sucesso");
 
+                    Reserva reserva = ingresso.getReserva();
+                    sessaoService.cancelarReservaAssento(reserva.getSessao(), reserva.getAssento().getNumero());
 
-
-
-                    ingresso.getSessao().getSala().getAssentos().stream()
-                            .filter(assento -> assento.getCliente().getCpf().equals(ingresso.getCliente().getCpf()))
-                            .forEach(assento -> {
-                                LOGGER.info("Assento numero = {} do cliente {} para a sessao hora-inicio = {} do filme = {} foi liberado",
-                                        assento.getNumero(), assento.getCliente().getNome(), ingresso.getSessao().getDataHoraInicio(),
-                                        ingresso.getSessao().getFilme().getTitulo());
-                                sessaoService.cancelarReservaAssento(ingresso.getSessao(), assento.getNumero(), ingresso.getCliente());
-                            });
-
-
-
+                    LOGGER.info("Assento numero = {} para a sessao hora-inicio = {} do filme = {} foi liberado",
+                            reserva.getAssento().getNumero(), reserva.getSessao().getDataHoraInicio(),
+                            reserva.getSessao().getFilme().getTitulo());
                 }
             });
             LOGGER.info("Job para cancelar reservas de ingressos vencidos executado com sucesso");
@@ -60,7 +53,5 @@ public class IngressoScheduled {
             LOGGER.error("Erro ao executar job para cancelar reservas de ingressos vencidos", ex.getMessage());
             throw new BusinessException("Erro ao executar job para cancelar reservas de ingressos vencidos");
         }
-
-
     }
 }
