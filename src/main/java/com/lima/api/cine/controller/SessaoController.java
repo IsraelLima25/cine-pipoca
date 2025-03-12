@@ -2,6 +2,7 @@ package com.lima.api.cine.controller;
 
 import com.lima.api.cine.controller.request.AbrirSessaoRequest;
 import com.lima.api.cine.controller.request.ReservarSessaoRequest;
+import com.lima.api.cine.controller.response.ReservaIngressoResponse;
 import com.lima.api.cine.controller.response.SessaoResponse;
 import com.lima.api.cine.exception.BusinessException;
 import com.lima.api.cine.model.Filme;
@@ -86,7 +87,7 @@ public class SessaoController {
     }
 
     @PostMapping("/reservar")
-    public ResponseEntity<Ingresso> reservar(@Valid @RequestBody ReservarSessaoRequest request){
+    public ResponseEntity<ReservaIngressoResponse> reservar(@Valid @RequestBody ReservarSessaoRequest request){
 
         LOGGER.info("Inicando reserva de assento na sessao");
         // TODO customizar validador existsById filter validation hibernate
@@ -103,8 +104,8 @@ public class SessaoController {
         Ingresso ingressoEmitido = ingressoService
                 .emitirIngresso(reserva, request.isMeiaEntrada(), request.formaPagamento(), request.numeroAssento());
 
-        // TODO retornar uma representação e não o model!!!
+        ReservaIngressoResponse reservaIngressoResponse = ingressoEmitido.toRepresentacaoView();
 
-        return ResponseEntity.ok(ingressoEmitido);
+        return ResponseEntity.ok(reservaIngressoResponse);
     }
 }

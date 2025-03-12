@@ -36,7 +36,6 @@ public class IngressoService {
         return ingresso;
     }
 
-    // TODO fazer tratamento de excessões personalizado
     // TODO averiguar as transações distribuidas
     // TODO melhorar a bateria de testes buscando mais confiabilidade na descoberta de bugs
 

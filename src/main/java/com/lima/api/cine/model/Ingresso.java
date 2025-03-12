@@ -1,5 +1,6 @@
 package com.lima.api.cine.model;
 
+import com.lima.api.cine.controller.response.ReservaIngressoResponse;
 import com.lima.api.cine.enums.FormaPagamento;
 import com.lima.api.cine.enums.StatusPagamento;
 import com.lima.api.cine.enums.StatusValidade;
@@ -88,5 +89,11 @@ public class Ingresso {
     private void calcularValorTotal() {
         this.valorTotal = isMeiaEntrada ?
                 reserva.getSessao().getValor().divide(new BigDecimal("2")) : reserva.getSessao().getValor();
+    }
+
+    public ReservaIngressoResponse toRepresentacaoView() {
+        return new ReservaIngressoResponse(id, isMeiaEntrada, valorTotal, formaPagamento, expiraEm,
+                statusValidade, statusPagamento, reserva.getSessao().getFilme().getTitulo(), reserva.getSessao().getSala().getNome(),
+                reserva.getAssento().getNumero());
     }
 }
