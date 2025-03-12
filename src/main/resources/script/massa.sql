@@ -34,6 +34,6 @@ values ("DISPONIVEL", '2025-03-10 14:30:00', '2025-03-10 16:30:00', '40.00', 4, 
 insert into db_cine_pipoca.tbl_reserva (id_sessao_reserva, id_assento_reserva) values (4, 25);
 
 -- Comprar ingresso
-insert into db_cine_pipoca.tbl_ingresso (meia_entrada, valor_total, sessao_id, forma_pagamento, expira_em, status_validade, status_pagamento, reserva_id)
+insert into db_cine_pipoca.tbl_ingresso (meia_entrada, valor_total, forma_pagamento, expira_em, status_validade, status_pagamento, reserva_id)
 values
 (0, '40.00', 4, "PIX", '2025-03-11 12:00:00', "NAO_EXPIRADO", "AGUARDANDO", 3);
