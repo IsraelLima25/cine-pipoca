@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/v1/ingressos")
@@ -25,12 +27,13 @@ public class IngressoController {
         this.ingressoService = ingressoService;
     }
 
-    @PostMapping("/pagar/{id}")
-    public ResponseEntity<PagamentoResponse> pagar(@PathVariable("id") Long id){
+    // TODO receber uma lista de ingressos e pagar todos de uma só vez
+    @PostMapping("/pagar/{uuid}")
+    public ResponseEntity<PagamentoResponse> pagar(@PathVariable("uuid") UUID uuid){
 
-        Ingresso ingresso = ingressoRepository.findById(id)
+        Ingresso ingresso = ingressoRepository.findByUuid(uuid.toString())
                 .orElseThrow(() -> {
-                    LOGGER.error("Filme com id = {} não existe na base de dados", id);
+                    LOGGER.error("Filme com id = {} não existe na base de dados", uuid);
                     return  new BusinessException("Ingresso não existe! Não foi possível fazer pagamento");
                 });
         return ResponseEntity.ok(new PagamentoResponse(ingressoService.pagar(ingresso)));

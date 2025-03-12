@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record ReservaIngressoResponse(
-    Long id,
+    String uuid,
     boolean isMeiaEntrada,
     BigDecimal valorTotal,
         FormaPagamento formaPagamento,

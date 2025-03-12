@@ -4,9 +4,11 @@ import com.lima.api.cine.controller.response.AssentoResponse;
 import com.lima.api.cine.controller.response.SalaResponse;
 import com.lima.api.cine.enums.StatusSala;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tbl_sala")
@@ -15,6 +17,9 @@ public class Sala {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "uuid")
+    private String uuid;
 
     @Column(name = "nome")
     private String nome;
@@ -33,6 +38,7 @@ public class Sala {
         this.nome = nome;
         this.status = StatusSala.FECHADA;
         criarAssentos(10);
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public List<Assento> getAssentos() {

@@ -17,11 +17,13 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/sessoes")
@@ -44,11 +46,11 @@ public class SessaoController {
     @PostMapping("/abrir")
     public ResponseEntity<Void> abrir(@Valid @RequestBody AbrirSessaoRequest request){
 
-        LOGGER.info("Iniciando abertura da sessao para o filmeId = {}", request.idFilme());
+        LOGGER.info("Iniciando abertura da sessao para o filmeId = {}", request.uuidFilme());
         // TODO customizar validador existsById filter validation hibernate
-        Filme filme = filmeRepository.findById(request.idFilme())
+        Filme filme = filmeRepository.findByUuid(request.uuidFilme())
                 .orElseThrow(() -> {
-                    LOGGER.error("Filme com id = {} não existe na base de dados", request.idFilme());
+                    LOGGER.error("Filme com id = {} não existe na base de dados", request.uuidFilme());
                     return  new BusinessException("Filme não existe! Não foi possível abrir uma sessão");
                 });
         Sessao sessao = request.toModel(filme);
@@ -66,41 +68,42 @@ public class SessaoController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/filme/{id}")
-    public ResponseEntity<List<SessaoResponse>> buscarPorFilme(@PathVariable("id") Long id){
+    @GetMapping("/filme/{uuid}")
+    public ResponseEntity<List<SessaoResponse>> buscarPorFilme(@PathVariable("uuid") UUID uuid){
 
-        LOGGER.info("Verificando existencia do filme = {}", id);
+        LOGGER.info("Verificando existencia do filme = {}", uuid.toString());
         // TODO customizar validador existsById filter validation hibernate
-        filmeRepository.findById(id)
+        filmeRepository.findByUuid(uuid.toString())
                 .orElseThrow(() -> {
-                   LOGGER.error("Filme com id = {} não existe na base de dados", id);
+                   LOGGER.error("Filme com id = {} não existe na base de dados", uuid);
                    return  new BusinessException("Filme não existe! Não foi possível abrir uma sessão");
                 });
 
-        LOGGER.info("Filme com id = {} encontrado com sucesso", id);
+        LOGGER.info("Filme com id = {} encontrado com sucesso", uuid);
 
-        List<Sessao> sessoes = sessaoRepository.listarSessoesDisponiveisPoridFilme(id);
+        List<Sessao> sessoes = sessaoRepository.listarSessoesDisponiveisPorUuidFilme(uuid.toString());
         List<SessaoResponse> listSessaoModel = sessoes.stream().map(Sessao::toRepresentacaoView).toList();
 
-        LOGGER.info("Lista de sessões disponiveis para o filme com id = {} retornada com sucesso", id);
+        LOGGER.info("Lista de sessões disponiveis para o filme com id = {} retornada com sucesso", uuid);
         return ResponseEntity.ok(listSessaoModel);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @PostMapping("/reservar")
     public ResponseEntity<ReservaIngressoResponse> reservar(@Valid @RequestBody ReservarSessaoRequest request){
 
         LOGGER.info("Inicando reserva de assento na sessao");
         // TODO customizar validador existsById filter validation hibernate
-        Sessao sessao = sessaoRepository.findById(request.idSessao())
+        Sessao sessao = sessaoRepository.findByUuid(request.uuidSessao())
                 .orElseThrow(() -> {
-                    LOGGER.error("Sessão com id = {} não existe na base de dados", request.idSessao());
+                    LOGGER.error("Sessão com id = {} não existe na base de dados", request.uuidSessao());
                     return  new BusinessException("Sessão não existe! Não foi possível fazer uma reserva");
                 });
 
         Reserva reserva = sessaoService.reservarAssento(sessao, request.numeroAssento());
-        LOGGER.info("Reserva realizada com sucesso para a sessao = {} e assento = {} ", request.idSessao(), request.numeroAssento());
+        LOGGER.info("Reserva realizada com sucesso para a sessao = {} e assento = {} ", request.uuidSessao(), request.numeroAssento());
 
-        LOGGER.info("Iniciando emissão de ingressso para a sessao id = {} e assento = {}", request.idSessao(), request.numeroAssento());
+        LOGGER.info("Iniciando emissão de ingressso para a sessao id = {} e assento = {}", request.uuidSessao(), request.numeroAssento());
         Ingresso ingressoEmitido = ingressoService
                 .emitirIngresso(reserva, request.isMeiaEntrada(), request.formaPagamento(), request.numeroAssento());
 

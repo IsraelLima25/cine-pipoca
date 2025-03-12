@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IngressoRepository extends JpaRepository<Ingresso, Long> {
@@ -24,4 +25,6 @@ public interface IngressoRepository extends JpaRepository<Ingresso, Long> {
             """)
     List<Ingresso> listarIngressosNaoExpirados(@Param("statusValidade") StatusValidade statusValidade,
                                                @Param("statusPagamento") StatusPagamento statusPagamento);
+
+    Optional<Ingresso> findByUuid(String uuid);
 }

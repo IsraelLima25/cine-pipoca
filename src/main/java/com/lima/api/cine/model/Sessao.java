@@ -3,9 +3,11 @@ package com.lima.api.cine.model;
 import com.lima.api.cine.controller.response.SessaoResponse;
 import com.lima.api.cine.enums.StatusSessao;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tbl_sessao")
@@ -14,6 +16,9 @@ public class Sessao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "uuid")
+    private String uuid;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -45,6 +50,7 @@ public class Sessao {
         this.sala = sala;
         this.valor = valor;
         this.abrirSessao();
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public Sala getSala() {
@@ -78,7 +84,7 @@ public class Sessao {
     // essa mistura de ingês com português está ficando ótima rsrs
     public SessaoResponse toRepresentacaoView(){
         //TODO pq n um MapStuct?? ....
-        return new SessaoResponse(id, status, dataHoraInicio, dataHoraFim,
+        return new SessaoResponse(uuid, status, dataHoraInicio, dataHoraFim,
                 filme.toRepresentacaoView(),
                 sala.toRepresentacaoView(),
                 valor);

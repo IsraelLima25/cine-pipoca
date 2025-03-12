@@ -2,6 +2,7 @@ package com.lima.api.cine.service;
 
 import com.lima.api.cine.exception.AssentoIndisponivelException;
 import com.lima.api.cine.exception.BusinessException;
+import com.lima.api.cine.exception.InfrastructureException;
 import com.lima.api.cine.model.Assento;
 import com.lima.api.cine.model.Reserva;
 import com.lima.api.cine.model.Sessao;
@@ -10,7 +11,6 @@ import com.lima.api.cine.repository.SessaoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SessaoService {
@@ -25,14 +25,14 @@ public class SessaoService {
         this.reservaRepository = reservaRepository;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public Reserva reservarAssento(Sessao sessao, int numeroAssento){
 
         try{
+
             LOGGER.info("Reservando assento numero = {} para o cliente {}", numeroAssento);
             Assento assentoReserva = sessao.getSala().getAssentos().stream()
                     .filter(assento -> assento.getNumero() == numeroAssento)
-                    .findFirst().get();
+                    .findFirst().orElseThrow(() -> new AssentoIndisponivelException("Assento com número " + numeroAssento + " não encontrado na sala."));
 
             assentoReserva.reservar();
 
@@ -47,7 +47,7 @@ public class SessaoService {
             throw assentoIndisponivelException;
         }catch (Exception ex){
             LOGGER.error("Erro ao reservar assento", ex);
-            throw new BusinessException("Erro ao reservar assento");
+            throw new InfrastructureException("Erro ao reservar assento");
         }
     }
     public void cancelarReservaAssento(Sessao sessao, int numeroAssento){

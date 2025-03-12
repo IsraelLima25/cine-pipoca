@@ -6,6 +6,8 @@ import com.lima.api.cine.exception.AssentoIndisponivelException;
 import com.lima.api.cine.exception.BusinessException;
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "tbl_assento")
 public class Assento {
@@ -16,6 +18,9 @@ public class Assento {
 
     @Column(name = "numero")
     private int numero;
+
+    @Column(name = "uuid")
+    private String uuid;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -29,6 +34,7 @@ public class Assento {
     public Assento(){}
 
     public Assento(int numero, Sala sala){
+        this.uuid = UUID.randomUUID().toString();
         this.sala = sala;
         this.numero = numero;
         this.status = StatusAssento.VAZIO;

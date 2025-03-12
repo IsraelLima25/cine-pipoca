@@ -6,6 +6,7 @@ import com.lima.api.cine.enums.StatusPagamento;
 import com.lima.api.cine.enums.StatusValidade;
 import com.lima.api.cine.exception.BusinessException;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +19,9 @@ public class Ingresso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "uuid")
+    private String uuid;
 
     @Column(name = "meia_entrada")
     private boolean isMeiaEntrada;
@@ -48,9 +52,10 @@ public class Ingresso {
         this.formaPagamento = formaPagamento;
         this.reserva = reserva;
         this.expiraEm = LocalDateTime.now().plusMinutes(15);
-        calcularValorTotal();
         this.statusValidade = StatusValidade.NAO_EXPIRADO;
         this.statusPagamento = StatusPagamento.AGUARDANDO;
+        this.uuid = UUID.randomUUID().toString();
+        calcularValorTotal();
     }
 
     public BigDecimal getValorTotal() {
@@ -92,7 +97,7 @@ public class Ingresso {
     }
 
     public ReservaIngressoResponse toRepresentacaoView() {
-        return new ReservaIngressoResponse(id, isMeiaEntrada, valorTotal, formaPagamento, expiraEm,
+        return new ReservaIngressoResponse(uuid, isMeiaEntrada, valorTotal, formaPagamento, expiraEm,
                 statusValidade, statusPagamento, reserva.getSessao().getFilme().getTitulo(), reserva.getSessao().getSala().getNome(),
                 reserva.getAssento().getNumero());
     }

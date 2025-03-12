@@ -3,6 +3,9 @@ package com.lima.api.cine.model;
 import com.lima.api.cine.controller.response.FilmeResponse;
 import com.lima.api.cine.enums.TipoIdiomaFilme;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "tbl_filme")
@@ -11,6 +14,9 @@ public class Filme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "uuid")
+    private String uuid;
 
     @Column(name = "titulo")
     private String titulo;
@@ -28,6 +34,7 @@ public class Filme {
         this.titulo = titulo;
         this.idioma = idioma;
         this.duracao = duracao;
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public Long getId() {
@@ -47,7 +54,7 @@ public class Filme {
     }
 
     public FilmeResponse toRepresentacaoView(){
-        return new FilmeResponse(id, titulo, idioma, duracao);
+        return new FilmeResponse(uuid, titulo, idioma, duracao);
     }
 
     @Override

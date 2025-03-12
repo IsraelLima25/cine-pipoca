@@ -4,6 +4,7 @@ import com.lima.api.cine.controller.response.FilmeResponse;
 import com.lima.api.cine.model.Filme;
 import com.lima.api.cine.repository.FilmeRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +21,6 @@ public class FilmeController {
         this.filmeRepository = filmeRepository;
     }
 
-    // TODO expor uuid ao invès do indentity da tabela do banco de dados
     @GetMapping
     public ResponseEntity<List<FilmeResponse>> listarTodos(){
 

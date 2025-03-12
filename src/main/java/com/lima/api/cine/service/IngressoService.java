@@ -1,6 +1,7 @@
 package com.lima.api.cine.service;
 
 import com.lima.api.cine.enums.FormaPagamento;
+import com.lima.api.cine.exception.InfrastructureException;
 import com.lima.api.cine.model.Ingresso;
 import com.lima.api.cine.model.Reserva;
 import com.lima.api.cine.repository.IngressoRepository;
@@ -20,12 +21,13 @@ public class IngressoService {
         this.ingressoRepository = ingressoRepository;
     }
 
-    @Transactional
     public Ingresso emitirIngresso(Reserva reserva, boolean meiaEntrada, FormaPagamento formaPagamento, int numeroAssento){
-        LOGGER.info("Gerando ingresso para o filme {} do cliente {}", reserva.getSessao().getFilme().getTitulo());
-        Ingresso ingresso = new Ingresso(meiaEntrada, formaPagamento, reserva.getSessao(), reserva);
-        ingressoRepository.save(ingresso);
-        LOGGER.info("""
+
+        try{
+            LOGGER.info("Gerando ingresso para o filme {} do cliente {}", reserva.getSessao().getFilme().getTitulo());
+            Ingresso ingresso = new Ingresso(meiaEntrada, formaPagamento, reserva.getSessao(), reserva);
+            ingressoRepository.save(ingresso);
+            LOGGER.info("""
                 
                 INGRESSO - {}                
                 SALA - {}
@@ -33,10 +35,13 @@ public class IngressoService {
                 [GERADO COM SUCESSO]                
                 """, reserva.getSessao().getFilme().getTitulo(), reserva.getSessao().getSala().getNome(), numeroAssento);
 
-        return ingresso;
+            return ingresso;
+        }catch (Exception ex){
+            LOGGER.error("Erro emitir ingresso", ex);
+            throw new InfrastructureException("Um erro aconteceu! Não foi possível emitir o ingresso.");
+        }
     }
 
-    // TODO averiguar as transações distribuidas
     // TODO melhorar a bateria de testes buscando mais confiabilidade na descoberta de bugs
 
     @Transactional(rollbackFor = Exception.class)

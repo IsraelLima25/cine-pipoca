@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SessaoRepository extends JpaRepository<Sessao, Long> {
@@ -18,8 +19,10 @@ public interface SessaoRepository extends JpaRepository<Sessao, Long> {
             WHERE
             sessao.status=DISPONIVEL
             AND
-            filme.id = :idFilme
+            filme.uuid = :uuidFilme
             """)
-    List<Sessao> listarSessoesDisponiveisPoridFilme(@Param("idFilme") Long idFilme);
+    List<Sessao> listarSessoesDisponiveisPorUuidFilme(@Param("uuidFilme") String uuidFilme);
+
+    Optional<Sessao> findByUuid(String uuid);
 
 }
