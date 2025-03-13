@@ -5,6 +5,7 @@ import com.lima.api.cine.controller.request.ReservarSessaoRequest;
 import com.lima.api.cine.controller.response.ReservaIngressoResponse;
 import com.lima.api.cine.controller.response.SessaoResponse;
 import com.lima.api.cine.exception.BusinessException;
+import com.lima.api.cine.exception.RecursoNaoEncontradoException;
 import com.lima.api.cine.model.Filme;
 import com.lima.api.cine.model.Ingresso;
 import com.lima.api.cine.model.Reserva;
@@ -47,12 +48,7 @@ public class SessaoController {
     public ResponseEntity<Void> abrir(@Valid @RequestBody AbrirSessaoRequest request){
 
         LOGGER.info("Iniciando abertura da sessao para o filmeId = {}", request.uuidFilme());
-        // TODO customizar validador existsById filter validation hibernate
-        Filme filme = filmeRepository.findByUuid(request.uuidFilme())
-                .orElseThrow(() -> {
-                    LOGGER.error("Filme com id = {} não existe na base de dados", request.uuidFilme());
-                    return  new BusinessException("Filme não existe! Não foi possível abrir uma sessão");
-                });
+        Filme filme = filmeRepository.findByUuid(request.uuidFilme()).get();
         Sessao sessao = request.toModel(filme);
         sessaoRepository.save(sessao);
 
@@ -72,11 +68,10 @@ public class SessaoController {
     public ResponseEntity<List<SessaoResponse>> buscarPorFilme(@PathVariable("uuid") UUID uuid){
 
         LOGGER.info("Verificando existencia do filme = {}", uuid.toString());
-        // TODO customizar validador existsById filter validation hibernate
         filmeRepository.findByUuid(uuid.toString())
                 .orElseThrow(() -> {
                    LOGGER.error("Filme com id = {} não existe na base de dados", uuid);
-                   return  new BusinessException("Filme não existe! Não foi possível abrir uma sessão");
+                   return  new RecursoNaoEncontradoException("Filme não existe! Não foi possível abrir uma sessão");
                 });
 
         LOGGER.info("Filme com id = {} encontrado com sucesso", uuid);
@@ -93,12 +88,7 @@ public class SessaoController {
     public ResponseEntity<ReservaIngressoResponse> reservar(@Valid @RequestBody ReservarSessaoRequest request){
 
         LOGGER.info("Inicando reserva de assento na sessao");
-        // TODO customizar validador existsById filter validation hibernate
-        Sessao sessao = sessaoRepository.findByUuid(request.uuidSessao())
-                .orElseThrow(() -> {
-                    LOGGER.error("Sessão com id = {} não existe na base de dados", request.uuidSessao());
-                    return  new BusinessException("Sessão não existe! Não foi possível fazer uma reserva");
-                });
+        Sessao sessao = sessaoRepository.findByUuid(request.uuidSessao()).get();
 
         Reserva reserva = sessaoService.reservarAssento(sessao, request.numeroAssento());
         LOGGER.info("Reserva realizada com sucesso para a sessao = {} e assento = {} ", request.uuidSessao(), request.numeroAssento());

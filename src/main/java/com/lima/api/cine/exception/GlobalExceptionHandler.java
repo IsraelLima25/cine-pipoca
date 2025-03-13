@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,6 +32,14 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleResponseInfrastructureException(InfrastructureException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         problemDetail.setTitle("Erro interno no servidor");
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(RecursoNaoEncontradoException.class)
+    public ProblemDetail handleResponseRecursoNaoEncontradoException(RecursoNaoEncontradoException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setTitle("Recurso não encontrado");
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }

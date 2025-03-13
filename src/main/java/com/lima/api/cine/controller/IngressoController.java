@@ -1,7 +1,7 @@
 package com.lima.api.cine.controller;
 
 import com.lima.api.cine.controller.response.PagamentoResponse;
-import com.lima.api.cine.exception.BusinessException;
+import com.lima.api.cine.exception.RecursoNaoEncontradoException;
 import com.lima.api.cine.model.Ingresso;
 import com.lima.api.cine.repository.IngressoRepository;
 import com.lima.api.cine.service.IngressoService;
@@ -31,10 +31,11 @@ public class IngressoController {
     @PostMapping("/pagar/{uuid}")
     public ResponseEntity<PagamentoResponse> pagar(@PathVariable("uuid") UUID uuid){
 
+
         Ingresso ingresso = ingressoRepository.findByUuid(uuid.toString())
                 .orElseThrow(() -> {
                     LOGGER.error("Filme com id = {} não existe na base de dados", uuid);
-                    return  new BusinessException("Ingresso não existe! Não foi possível fazer pagamento");
+                    return new RecursoNaoEncontradoException("Ingresso não existe! Não foi possível fazer pagamento");
                 });
         return ResponseEntity.ok(new PagamentoResponse(ingressoService.pagar(ingresso)));
     }

@@ -3,6 +3,7 @@ package com.lima.api.cine.controller.request;
 import com.lima.api.cine.model.Filme;
 import com.lima.api.cine.model.Sala;
 import com.lima.api.cine.model.Sessao;
+import com.lima.api.cine.validator.ExistsUuid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ public record AbrirSessaoRequest(
 
     @UUID
     @NotBlank
+    @ExistsUuid(domainClass = Filme.class, fieldName = "uuid")
     String uuidFilme,
 
     @NotBlank
