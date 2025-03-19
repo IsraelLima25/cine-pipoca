@@ -49,6 +49,7 @@ public class SessaoController {
 
         LOGGER.info("Iniciando abertura da sessao para o filmeId = {}", request.uuidFilme());
         Filme filme = filmeRepository.findByUuid(request.uuidFilme()).get();
+        // TODO: Ao invés de um toModel poderia ser um builder ou factory??
         Sessao sessao = request.toModel(filme);
         sessaoRepository.save(sessao);
 

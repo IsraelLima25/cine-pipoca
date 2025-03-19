@@ -6,7 +6,6 @@ import com.lima.api.cine.enums.StatusPagamento;
 import com.lima.api.cine.enums.StatusValidade;
 import com.lima.api.cine.exception.BusinessException;
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -47,7 +46,7 @@ public class Ingresso {
     @Deprecated
     public Ingresso(){}
 
-    public Ingresso(boolean isMeiaEntrada, FormaPagamento formaPagamento, Sessao sessao, Reserva reserva) {
+    public Ingresso(boolean isMeiaEntrada, FormaPagamento formaPagamento, Reserva reserva) {
         this.isMeiaEntrada = isMeiaEntrada;
         this.formaPagamento = formaPagamento;
         this.reserva = reserva;
@@ -70,8 +69,8 @@ public class Ingresso {
         return reserva;
     }
 
-    public boolean isDataExpirada(){
-        return LocalDateTime.now().isAfter(this.expiraEm);
+    public boolean isDataExpirada(LocalDateTime dataHoraAtual){
+        return dataHoraAtual.isAfter(this.expiraEm);
     }
 
     public void expirar(){

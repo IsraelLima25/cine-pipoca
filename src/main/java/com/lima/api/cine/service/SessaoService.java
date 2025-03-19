@@ -34,6 +34,7 @@ public class SessaoService {
                     .filter(assento -> assento.getNumero() == numeroAssento)
                     .findFirst().orElseThrow(() -> new AssentoIndisponivelException("Assento com número " + numeroAssento + " não encontrado na sala."));
 
+            // TODO: alterar para assento.reservar()!!! Melhora a legibilidade do código
             assentoReserva.reservar();
 
             Reserva reserva = new Reserva(sessao, assentoReserva);

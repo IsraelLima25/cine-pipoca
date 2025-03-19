@@ -83,7 +83,7 @@ public class Sessao {
 
     // essa mistura de ingês com português está ficando ótima rsrs
     public SessaoResponse toRepresentacaoView(){
-        //TODO pq n um MapStuct?? ....
+
         return new SessaoResponse(uuid, status, dataHoraInicio, dataHoraFim,
                 filme.toRepresentacaoView(),
                 sala.toRepresentacaoView(),

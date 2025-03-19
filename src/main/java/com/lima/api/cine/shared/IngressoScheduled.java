@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -37,7 +38,7 @@ public class IngressoScheduled {
             List<Ingresso> ingressos = ingressoRepository.listarIngressosNaoExpirados(StatusValidade.NAO_EXPIRADO, StatusPagamento.AGUARDANDO);
 
             ingressos.forEach(ingresso -> {
-                if (ingresso.isDataExpirada()) {
+                if (ingresso.isDataExpirada(LocalDateTime.now())) {
                     ingresso.expirar();
                     LOGGER.info("Ingresso expirado com sucesso");
 

@@ -25,7 +25,7 @@ public class IngressoService {
 
         try{
             LOGGER.info("Gerando ingresso para o filme {} do cliente {}", reserva.getSessao().getFilme().getTitulo());
-            Ingresso ingresso = new Ingresso(meiaEntrada, formaPagamento, reserva.getSessao(), reserva);
+            Ingresso ingresso = new Ingresso(meiaEntrada, formaPagamento, reserva);
             ingressoRepository.save(ingresso);
             LOGGER.info("""
                 
@@ -50,7 +50,7 @@ public class IngressoService {
         LOGGER.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {}",
                 ingresso.getReserva().getSessao().getFilme().getTitulo());
 
-        // TODO chamar gateway de pagamento usando CompletableFuture<?>
+        // TODO: chamar serviço de pagamento
         String codigoPagamento = ingresso.pagar();
         LOGGER.info("Pagamento código = {} para ingresso do filme {}  realizado com sucesso.", codigoPagamento,
                 ingresso.getReserva().getSessao().getFilme().getTitulo());
