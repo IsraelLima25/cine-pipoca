@@ -40,6 +40,7 @@ public class Assento {
         this.status = StatusAssento.VAZIO;
     }
 
+    // condição de corrida
     public void reservar(){
 
         if(status != StatusAssento.VAZIO){
