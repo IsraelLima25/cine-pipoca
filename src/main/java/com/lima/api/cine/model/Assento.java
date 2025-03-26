@@ -30,6 +30,9 @@ public class Assento {
     @JoinColumn(name = "sala_id")
     private Sala sala;
 
+    @Column(name = "version")
+    private int version;
+
     @Deprecated
     public Assento(){}
 

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-
 @RestController
 @RequestMapping("/api/v1/ingressos")
 public class IngressoController {
@@ -30,7 +29,6 @@ public class IngressoController {
     // TODO receber uma lista de ingressos e pagar todos de uma só vez
     @PostMapping("/pagar/{uuid}")
     public ResponseEntity<PagamentoResponse> pagar(@PathVariable("uuid") UUID uuid){
-
 
         Ingresso ingresso = ingressoRepository.findByUuid(uuid.toString())
                 .orElseThrow(() -> {

@@ -6,24 +6,7 @@ import java.math.BigDecimal;
 
 public enum FormaPagamento {
 
-    DEBITO{
-        @Override
-        public void executar(BigDecimal valor) {
-            System.out.println("Iniciando pagamento no débito");
-        }
-    },
-    CREDITO {
-        @Override
-        public void executar(BigDecimal valor) {
-            System.out.println("Iniciando pagamento no crédito");
-        }
-    },
-    PIX {
-        @Override
-        public void executar(BigDecimal valor) {
-            System.out.println("Iniciando pagamento no pix");
-        }
-    };
-
-    public abstract void executar(BigDecimal valor);
+    DEBITO,
+    CREDITO,
+    PIX
 }

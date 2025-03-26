@@ -1,6 +1,8 @@
 package com.lima.api.cine.service;
 
+import com.lima.api.cine.api.request.PagamentoRequest;
 import com.lima.api.cine.enums.FormaPagamento;
+import com.lima.api.cine.exception.BusinessException;
 import com.lima.api.cine.exception.InfrastructureException;
 import com.lima.api.cine.model.Ingresso;
 import com.lima.api.cine.model.Reserva;
@@ -16,9 +18,11 @@ public class IngressoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(IngressoService.class);
 
     private final IngressoRepository ingressoRepository;
+    private final PagamentoService pagamentoService;
 
-    public IngressoService(IngressoRepository ingressoRepository) {
+    public IngressoService(IngressoRepository ingressoRepository, PagamentoService pagamentoService) {
         this.ingressoRepository = ingressoRepository;
+        this.pagamentoService = pagamentoService;
     }
 
     public Ingresso emitirIngresso(Reserva reserva, boolean meiaEntrada, FormaPagamento formaPagamento, int numeroAssento){
@@ -43,23 +47,41 @@ public class IngressoService {
     }
 
     // TODO melhorar a bateria de testes buscando mais confiabilidade na descoberta de bugs
-
     @Transactional(rollbackFor = Exception.class)
     public String pagar(Ingresso ingresso) {
 
-        LOGGER.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {}",
-                ingresso.getReserva().getSessao().getFilme().getTitulo());
+        try{
+            LOGGER.info("Iniciando validação do ingresso {}", ingresso.getUuid());
+            validarIngresso(ingresso);
+            LOGGER.info("Ingresso {} válido", ingresso.getUuid());
 
-        // TODO: chamar serviço de pagamento
-        String codigoPagamento = ingresso.pagar();
-        LOGGER.info("Pagamento código = {} para ingresso do filme {}  realizado com sucesso.", codigoPagamento,
-                ingresso.getReserva().getSessao().getFilme().getTitulo());
+            LOGGER.info("Iniciando comunicação com gateway de pagamento para ingresso do filme {}",
+                    ingresso.getReserva().getSessao().getFilme().getTitulo());
+            String codigoPagamento = pagamentoService.pagar(new PagamentoRequest(ingresso.getUuid(), ingresso.getFormaPagamento(), ingresso.getValorTotal()));
+            LOGGER.info("Pagamento código = {} para ingresso do filme {}  realizado com sucesso.", codigoPagamento,
+                    ingresso.getReserva().getSessao().getFilme().getTitulo());
 
-        LOGGER.info("Ocupando assento numero = {}", ingresso.getReserva().getAssento().getNumero());
-        ingresso.getReserva().getAssento().confirmarReserva();
-        LOGGER.info("Assento numero = {} ocupado com sucesso. Desejamos uma ótima sessão",
-                ingresso.getReserva().getAssento().getNumero());
+            LOGGER.info("Ocupando assento numero = {}", ingresso.getReserva().getAssento().getNumero());
+            ingresso.getReserva().getAssento().confirmarReserva();
+            LOGGER.info("Assento numero = {} ocupado com sucesso. Desejamos uma ótima sessão",
+                    ingresso.getReserva().getAssento().getNumero());
 
-        return codigoPagamento;
+            return codigoPagamento;
+        }catch (RuntimeException ex){
+            LOGGER.error("Erro ao processar pagamento do ingresso {}", ingresso.getUuid());
+            throw ex;
+        }
+    }
+
+    public boolean validarIngresso(Ingresso ingresso){
+        try {
+            LOGGER.info("Iniciando a validação do ingresso {}", ingresso.getUuid());
+            ingresso.hasValid();
+            LOGGER.info("Ingresso {} validado com sucesso", ingresso.getUuid());
+            return true;
+        }catch (BusinessException ex){
+            LOGGER.error("Ingresso {} inválido", ingresso.getUuid());
+            throw ex;
+        }
     }
 }

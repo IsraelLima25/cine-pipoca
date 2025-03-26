@@ -40,7 +40,6 @@ public class SessaoService {
             Reserva reserva = new Reserva(sessao, assentoReserva);
             reservaRepository.save(reserva);
 
-            LOGGER.info("Assento numero = {} reservado com sucesso para o cliente {}", numeroAssento);
             return reserva;
 
         }catch (AssentoIndisponivelException assentoIndisponivelException){

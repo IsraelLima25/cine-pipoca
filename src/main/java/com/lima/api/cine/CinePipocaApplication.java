@@ -2,6 +2,7 @@ package com.lima.api.cine;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 // TODO: Aplicar um formatador/lint exemplo checkstyle ou spotless
@@ -9,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableFeignClients
 public class CinePipocaApplication {
 
 	public static void main(String[] args) {

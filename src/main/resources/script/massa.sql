@@ -6,10 +6,14 @@
 -- select * from db_cine_pipoca.tbl_ingresso ti;
 -- select * from db_cine_pipoca.tbl_reserva tr;
 
+select COUNT(*) from db_cine_pipoca.tbl_ingresso ti;
+select COUNT(*) from db_cine_pipoca.tbl_reserva tr;
+
+
 -- Criar filme
-insert into  db_cine_pipoca.tbl_filme (titulo, idioma, duracao) values ("O auto da compadecida", "DUBLADO", "2h");
-insert into  db_cine_pipoca.tbl_filme (titulo, idioma, duracao) values ("A garota da vez", "LEGENDADO", "1h30m");
-insert into  db_cine_pipoca.tbl_filme (titulo, idioma, duracao) values ("A procura da felicidade", "LEGENDADO", "2h10m");
+insert into  db_cine_pipoca.tbl_filme (titulo, idioma, duracao, uuid) values ("O auto da compadecida 2", "DUBLADO", "2h", UUID());
+insert into  db_cine_pipoca.tbl_filme (titulo, idioma, duracao, uuid) values ("A garota da vez", "LEGENDADO", "1h30m", UUID());
+insert into  db_cine_pipoca.tbl_filme (titulo, idioma, duracao, uuid) values ("A procura da felicidade", "LEGENDADO", "2h10m", UUID());
 
 -- Criar sala
 insert into db_cine_pipoca.tbl_sala (nome, status) values ("A", "ABERTA");

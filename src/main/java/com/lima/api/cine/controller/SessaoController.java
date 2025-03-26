@@ -4,7 +4,6 @@ import com.lima.api.cine.controller.request.AbrirSessaoRequest;
 import com.lima.api.cine.controller.request.ReservarSessaoRequest;
 import com.lima.api.cine.controller.response.ReservaIngressoResponse;
 import com.lima.api.cine.controller.response.SessaoResponse;
-import com.lima.api.cine.exception.BusinessException;
 import com.lima.api.cine.exception.RecursoNaoEncontradoException;
 import com.lima.api.cine.model.Filme;
 import com.lima.api.cine.model.Ingresso;
@@ -84,6 +83,7 @@ public class SessaoController {
         return ResponseEntity.ok(listSessaoModel);
     }
 
+    // TODO: Esse metodo está com muitas responsabilidades e classe também!!
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/reservar")
     public ResponseEntity<ReservaIngressoResponse> reservar(@Valid @RequestBody ReservarSessaoRequest request){
@@ -92,13 +92,14 @@ public class SessaoController {
         Sessao sessao = sessaoRepository.findByUuid(request.uuidSessao()).get();
 
         Reserva reserva = sessaoService.reservarAssento(sessao, request.numeroAssento());
-        LOGGER.info("Reserva realizada com sucesso para a sessao = {} e assento = {} ", request.uuidSessao(), request.numeroAssento());
 
         LOGGER.info("Iniciando emissão de ingressso para a sessao id = {} e assento = {}", request.uuidSessao(), request.numeroAssento());
         Ingresso ingressoEmitido = ingressoService
-                .emitirIngresso(reserva, request.isMeiaEntrada(), request.formaPagamento(), request.numeroAssento());
+                 .emitirIngresso(reserva, request.isMeiaEntrada(), request.formaPagamento(), request.numeroAssento());
 
         ReservaIngressoResponse reservaIngressoResponse = ingressoEmitido.toRepresentacaoView();
+
+        LOGGER.info("Reserva realizada com sucesso para a sessao = {} e assento = {} ", request.uuidSessao(), request.numeroAssento());
 
         return ResponseEntity.ok(reservaIngressoResponse);
     }

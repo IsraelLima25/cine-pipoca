@@ -57,6 +57,14 @@ public class Ingresso {
         calcularValorTotal();
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public FormaPagamento getFormaPagamento() {
+        return formaPagamento;
+    }
+
     public BigDecimal getValorTotal() {
         return valorTotal;
     }
@@ -77,17 +85,14 @@ public class Ingresso {
         this.statusValidade = StatusValidade.EXPIRADO;
     }
 
-    public String pagar(){
+    public void hasValid(){
         if(statusPagamento == StatusPagamento.PAGO || statusPagamento == StatusPagamento.CANCELADO){
             throw new BusinessException("Não foi possivel processar o pagamento. Este ingresso ou já foi pago ou está cancelado.");
         }
         if(statusValidade == StatusValidade.EXPIRADO){
             throw new BusinessException("Este ingresso expirou! Você perdeu o seu lugar na sessão. Favor emitir outro ingresso.");
         }
-        this.formaPagamento.executar(valorTotal);
         this.statusPagamento = StatusPagamento.PAGO;
-
-        return UUID.randomUUID().toString();
     }
 
     private void calcularValorTotal() {

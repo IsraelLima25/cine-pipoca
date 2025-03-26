@@ -1,0 +1,1 @@
+ALTER TABLE tbl_assento ADD COLUMN version INT NOT NULL DEFAULT 0;
